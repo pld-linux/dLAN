@@ -14,6 +14,7 @@ License:	Devolo AG License
 Group:		Applications
 Source0:	http://download.devolo.net/webcms/0599755001130248395/%{name}-linux-package-%{version}.tar.gz
 # Source0-md5:	419b5e551a7e8eb7e2f609b252287712
+Patch0:		%{name}-usbkill.patch
 URL:		http://www.devolo.de/de_DE/index.html
 BuildRequires:	%{kgcc_package}
 %{?with_dist_kernel:BuildRequires:      kernel-module-build}
@@ -70,6 +71,7 @@ Sterowniki j±dra SMP Linuksa dla dLAN MicroLinka.
 
 %prep
 %setup -q -n %{name}-linux-package-%{version}
+%patch0 -p1
 
 %build
 %configure
@@ -79,6 +81,7 @@ Sterowniki j±dra SMP Linuksa dla dLAN MicroLinka.
 
 %if %{with kernel}
 # kernel module(s)
+cd driver
 for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
         if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
                 exit 1
@@ -91,7 +94,7 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
         ln -sf %{_kernelsrcdir}/Module.symvers-$cfg Module.symvers
         touch include/config/MARKER
 
-        %{__make} usbdriver \
+	%{__make} -C %{_kernelsrcdir} modules
                 CC="%{__cc}" CPP="%{__cpp}" \
                 M=$PWD O=$PWD \
                 %{?with_verbose:V=1}
