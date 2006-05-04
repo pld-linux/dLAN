@@ -10,10 +10,11 @@ Summary(pl):	Sterowniki dLAN
 Name:		dLAN
 Version:	2.0
 Release:	1
-License:	Devolo AG License
+License:	Devolo AG License, non-distributable
 Group:		Applications
 Source0:	http://download.devolo.net/webcms/0599755001130248395/%{name}-linux-package-%{version}.tar.gz
-# Source0-md5:	419b5e551a7e8eb7e2f609b252287712
+# NoSource0-md5:	419b5e551a7e8eb7e2f609b252287712
+NoSource:	0
 Patch0:		%{name}-usbkill.patch
 URL:		http://www.devolo.de/de_DE/index.html
 BuildRequires:	%{kgcc_package}
@@ -108,8 +109,6 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 done
 %endif
 
-%endif
-
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT
@@ -120,21 +119,12 @@ install -d $RPM_BUILD_ROOT
 %endif
 
 %if %{with kernel}
-%if %{without dist_kernel}
-for mod in *-nondist.ko; do
-        nmod=$(echo "$mod" | sed -e 's#-nondist##g')
-        install $mod $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/$nmod
-done
-%else
-for mod in *-up.ko; do
-        nmod=$(echo "$mod" | sed -e 's#-up##g')
-        install $mod $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/$nmod
-done
-%if %{with smp}
-for mod in *-smp.ko; do
-        nmod=$(echo "$mod" | sed -e 's#-smp##g')
-        install $mod $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/$nmod
-done
+install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/misc
+install driver/devolo_usb-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
+                $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/devolo_usb.ko
+%if %{with smp} && %{with dist_kernel}
+install driver/devolo_usb-smp.ko \
+                $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/devolo_usb.ko
 %endif
 %endif
 
