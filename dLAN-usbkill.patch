@@ -1,0 +1,14 @@
+--- dLAN-linux-package-2.0/driver/devolo_usb.c.org	2006-05-04 03:25:59.245636000 +0200
++++ dLAN-linux-package-2.0/driver/devolo_usb.c	2006-05-04 03:31:50.131565000 +0200
+@@ -201,11 +201,6 @@
+   devoloUSB_t * devolo = net->priv;
+   if (!devolo)
+     return;
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0))
+-  devolo->tx_urb->transfer_flags |= URB_ASYNC_UNLINK;
+-#else
+-  devolo->tx_urb->transfer_flags |= USB_ASYNC_UNLINK;
+-#endif
+   usb_unlink_urb (devolo->tx_urb);
+ 
+   /*
