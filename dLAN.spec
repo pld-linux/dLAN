@@ -1,9 +1,12 @@
+# TODO: optflags for userspace
+#
+# Conditional build:
 %bcond_without  dist_kernel     # without kernel from distribution
 %bcond_without  kernel          # don't build kernel modules
 %bcond_without  smp             # don't build SMP module
 %bcond_without  userspace       # don't build userspace module
 %bcond_with     verbose         # verbose build (V=1)
-
+#
 Summary:	dLAN drivers
 Summary(de):	dLAN Treiber
 Summary(pl):	Sterowniki dLAN
@@ -17,12 +20,14 @@ Source0:	http://download.devolo.net/webcms/0599755001130248395/%{name}-linux-pac
 NoSource:	0
 Patch0:		%{name}-usbkill.patch
 URL:		http://www.devolo.de/de_DE/index.html
+%if %{with kernel}
 BuildRequires:	%{kgcc_package}
 %{?with_dist_kernel:BuildRequires:      kernel-module-build}
+%endif
+%if %{with userspace}
 BuildRequires:	libpcap-devel
+%endif
 BuildRequires:	rpmbuild(macros) >= 1.268
-Requires(post,preun):	/sbin/chkconfig
-Requires:	rc-scripts
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -32,7 +37,7 @@ MicroLink dLAN drivers for Linux 2.4/2.6.
 MicroLink dLAN Treiber für Linux 2.4/2.6.
 
 %description -l pl
-Sterowniki MicroLink dLAN dla linuksa 2.4/2.6.
+Sterowniki MicroLink dLAN dla Linuksa 2.4/2.6.
 
 %package -n kernel-char-dLAN
 Summary:	Linux kernel driver for MicroLink dLAN
@@ -84,28 +89,28 @@ Sterowniki j±dra SMP Linuksa dla dLAN MicroLinka.
 # kernel module(s)
 cd driver
 for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
-        if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
-                exit 1
-        fi
-        install -d o/include/linux
-        ln -sf %{_kernelsrcdir}/config-$cfg o/.config
-        ln -sf %{_kernelsrcdir}/Module.symvers-$cfg o/Module.symvers
-        ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h o/include/linux/autoconf.h
-        %{__make} -C %{_kernelsrcdir} O=$PWD/o prepare scripts
-        %{__make} -C %{_kernelsrcdir} clean \
-                RCS_FIND_IGNORE="-name '*.ko' -o" \
-                M=$PWD O=$PWD/o \
-                %{?with_verbose:V=1}
-        %{__make} -C %{_kernelsrcdir} modules \
+	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
+		exit 1
+	fi
+	install -d o/include/linux
+	ln -sf %{_kernelsrcdir}/config-$cfg o/.config
+	ln -sf %{_kernelsrcdir}/Module.symvers-$cfg o/Module.symvers
+	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h o/include/linux/autoconf.h
+	%{__make} -C %{_kernelsrcdir} O=$PWD/o prepare scripts
+	%{__make} -C %{_kernelsrcdir} clean \
+		RCS_FIND_IGNORE="-name '*.ko' -o" \
+		M=$PWD O=$PWD/o \
+		%{?with_verbose:V=1}
+	%{__make} -C %{_kernelsrcdir} modules \
 %if "%{_target_base_arch}" != "%{_arch}"
-                ARCH=%{_target_base_arch} \
-                CROSS_COMPILE=%{_target_base_cpu}-pld-linux- \
+		ARCH=%{_target_base_arch} \
+		CROSS_COMPILE=%{_target_base_cpu}-pld-linux- \
 %endif
-                HOSTCC="%{__cc}" \
-                CPP="%{__cpp}" \
-                M=$PWD O=$PWD/o \
-                %{?with_verbose:V=1}
-        mv devolo_usb{,-$cfg}.ko
+		HOSTCC="%{__cc}" \
+		CPP="%{__cpp}" \
+		M=$PWD O=$PWD/o \
+		%{?with_verbose:V=1}
+	mv devolo_usb{,-$cfg}.ko
 done
 %endif
 
@@ -121,10 +126,10 @@ install -d $RPM_BUILD_ROOT
 %if %{with kernel}
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/misc
 install driver/devolo_usb-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
-                $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/devolo_usb.ko
+	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/devolo_usb.ko
 %if %{with smp} && %{with dist_kernel}
 install driver/devolo_usb-smp.ko \
-                $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/devolo_usb.ko
+	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/devolo_usb.ko
 %endif
 %endif
 
