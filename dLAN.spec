@@ -82,7 +82,8 @@ Sterowniki j±dra SMP Linuksa dla dLAN MicroLinka.
 %build
 %configure
 %if %{with userspace}
-%{__make} cfgtool
+%{__make} cfgtool \
+	CC="%{__cc}"
 %endif
 
 %if %{with kernel}
