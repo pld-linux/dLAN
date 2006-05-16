@@ -1,4 +1,3 @@
-# TODO: optflags for userspace
 #
 # Conditional build:
 %bcond_without  dist_kernel     # without kernel from distribution
@@ -83,7 +82,7 @@ Sterowniki j±dra SMP Linuksa dla dLAN MicroLinka.
 %configure
 %if %{with userspace}
 %{__make} cfgtool \
-	CC="%{__cc}"
+	CFLAGS='%{rpmcflags} -Wall $(DEFS) $(DEFINES)'
 %endif
 
 %if %{with kernel}
