@@ -1,10 +1,10 @@
 #
 # Conditional build:
-%bcond_without  dist_kernel     # without kernel from distribution
-%bcond_without  kernel          # don't build kernel modules
-%bcond_without  smp             # don't build SMP module
-%bcond_without  userspace       # don't build userspace module
-%bcond_with     verbose         # verbose build (V=1)
+%bcond_without	dist_kernel	# without kernel from distribution
+%bcond_without	kernel		# don't build kernel modules
+%bcond_without	smp		# don't build SMP module
+%bcond_without	userspace	# don't build userspace module
+%bcond_with	verbose		# verbose build (V=1)
 #
 Summary:	dLAN drivers
 Summary(de):	dLAN Treiber
@@ -21,7 +21,7 @@ Patch0:		%{name}-usbkill.patch
 URL:		http://www.devolo.de/de_DE/index.html
 %if %{with kernel}
 BuildRequires:	%{kgcc_package}
-%{?with_dist_kernel:BuildRequires:      kernel-module-build}
+%{?with_dist_kernel:BuildRequires:	kernel-module-build}
 %endif
 %if %{with userspace}
 BuildRequires:	libpcap-devel
