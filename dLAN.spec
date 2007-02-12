@@ -7,8 +7,8 @@
 %bcond_with	verbose		# verbose build (V=1)
 #
 Summary:	dLAN drivers
-Summary(de):	dLAN Treiber
-Summary(pl):	Sterowniki dLAN
+Summary(de.UTF-8):   dLAN Treiber
+Summary(pl.UTF-8):   Sterowniki dLAN
 Name:		dLAN
 Version:	2.0
 Release:	1
@@ -32,16 +32,16 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %description
 MicroLink dLAN drivers for Linux 2.4/2.6.
 
-%description -l de
-MicroLink dLAN Treiber für Linux 2.4/2.6.
+%description -l de.UTF-8
+MicroLink dLAN Treiber fÃ¼r Linux 2.4/2.6.
 
-%description -l pl
+%description -l pl.UTF-8
 Sterowniki MicroLink dLAN dla Linuksa 2.4/2.6.
 
 %package -n kernel-char-dLAN
 Summary:	Linux kernel driver for MicroLink dLAN
-Summary(de):	Linux Kernel Treiber für MicroLink dLAN
-Summary(pl):	Sterownik j±dra Linuksa dla dLAN MicroLinka
+Summary(de.UTF-8):   Linux Kernel Treiber fÃ¼r MicroLink dLAN
+Summary(pl.UTF-8):   Sterownik jÄ…dra Linuksa dla dLAN MicroLinka
 Release:	%{release}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_up}
@@ -50,16 +50,16 @@ Requires(post,postun):	/sbin/depmod
 %description -n kernel-char-dLAN
 Linux kernel drivers for MicroLink dLAN.
 
-%description -n kernel-char-dLAN -l de
-Linux Kernel Treiber für MicroLink dLAN.
+%description -n kernel-char-dLAN -l de.UTF-8
+Linux Kernel Treiber fÃ¼r MicroLink dLAN.
 
-%description -n kernel-char-dLAN -l pl
-Sterowniki j±dra Linuksa dla dLAN MicroLinka.
+%description -n kernel-char-dLAN -l pl.UTF-8
+Sterowniki jÄ…dra Linuksa dla dLAN MicroLinka.
 
 %package -n kernel-smp-char-dLAN
 Summary:	Linux SMP kernel driver for MicroLink dLAN
-Summary(de):	Linux SMP Kernel Treiber für MicroLink dLAN
-Summary(pl):	Sterownik j±dra SMP Linuksa dla dLAN MicroLinka
+Summary(de.UTF-8):   Linux SMP Kernel Treiber fÃ¼r MicroLink dLAN
+Summary(pl.UTF-8):   Sterownik jÄ…dra SMP Linuksa dla dLAN MicroLinka
 Release:	%{release}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_up}
@@ -68,11 +68,11 @@ Requires(post,postun):	/sbin/depmod
 %description -n kernel-smp-char-dLAN
 Linux SMP kernel drivers for MicroLink dLAN.
 
-%description -n kernel-smp-char-dLAN -l de
-Linux SMP Kernel Treiber für MicroLink dLAN.
+%description -n kernel-smp-char-dLAN -l de.UTF-8
+Linux SMP Kernel Treiber fÃ¼r MicroLink dLAN.
 
-%description -n kernel-smp-char-dLAN -l pl
-Sterowniki j±dra SMP Linuksa dla dLAN MicroLinka.
+%description -n kernel-smp-char-dLAN -l pl.UTF-8
+Sterowniki jÄ…dra SMP Linuksa dla dLAN MicroLinka.
 
 %prep
 %setup -q -n %{name}-linux-package-%{version}
