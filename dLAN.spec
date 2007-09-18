@@ -1,28 +1,31 @@
+# TODO
+# - about license: http://www.spinics.net/lists/linux-usb-devel/msg03600.html
 #
 # Conditional build:
 %bcond_without	dist_kernel	# without kernel from distribution
 %bcond_without	kernel		# don't build kernel modules
-%bcond_without	up		# don't build UP module
-%bcond_without	smp		# don't build SMP module
 %bcond_without	userspace	# don't build userspace module
 %bcond_with	verbose		# verbose build (V=1)
+#
+%if %{without kernel}
+%undefine	with_dist_kernel
+%endif
 #
 Summary:	dLAN drivers
 Summary(de.UTF-8):	dLAN Treiber
 Summary(pl.UTF-8):	Sterowniki dLAN
 Name:		dLAN
-Version:	2.0
-Release:	1
+Version:	3
+Release:	0.1
 License:	Devolo AG License, non-distributable
 Group:		Applications
-Source0:	http://download.devolo.net/webcms/0599755001130248395/%{name}-linux-package-%{version}.tar.gz
-# NoSource0-md5:	419b5e551a7e8eb7e2f609b252287712
+Source0:	http://download.devolo.net/webcms/0518732001164965747/%{name}-linux-package-v%{version}.tar.gz
+# NoSource0-md5:	5ac30a52511a22571805519641a28e66
 NoSource:	0
-Patch0:		%{name}-usbkill.patch
-URL:		http://www.devolo.de/de_DE/index.html
+URL:		http://www.devolo.com/co_EN/produkte/dlan/dn-1-mldlanduo.html
 %if %{with kernel}
-BuildRequires:	%{kgcc_package}
-%{?with_dist_kernel:BuildRequires:	kernel-module-build}
+%{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20.2}
+BuildRequires:	rpmbuild(macros) >= 1.379
 %endif
 %if %{with userspace}
 BuildRequires:	libpcap-devel
@@ -45,7 +48,10 @@ Summary(de.UTF-8):	Linux Kernel Treiber für MicroLink dLAN
 Summary(pl.UTF-8):	Sterownik jądra Linuksa dla dLAN MicroLinka
 Release:	%{release}@%{_kernel_ver_str}
 Group:		Base/Kernel
-%{?with_dist_kernel:%requires_releq_kernel_up}
+%if %{with dist_kernel}
+%requires_releq_kernel
+Requires(postun):	%releq_kernel
+%endif
 Requires(post,postun):	/sbin/depmod
 
 %description -n kernel-char-dLAN
@@ -57,62 +63,19 @@ Linux Kernel Treiber für MicroLink dLAN.
 %description -n kernel-char-dLAN -l pl.UTF-8
 Sterowniki jądra Linuksa dla dLAN MicroLinka.
 
-%package -n kernel-smp-char-dLAN
-Summary:	Linux SMP kernel driver for MicroLink dLAN
-Summary(de.UTF-8):	Linux SMP Kernel Treiber für MicroLink dLAN
-Summary(pl.UTF-8):	Sterownik jądra SMP Linuksa dla dLAN MicroLinka
-Release:	%{release}@%{_kernel_ver_str}
-Group:		Base/Kernel
-%{?with_dist_kernel:%requires_releq_kernel_up}
-Requires(post,postun):	/sbin/depmod
-
-%description -n kernel-smp-char-dLAN
-Linux SMP kernel drivers for MicroLink dLAN.
-
-%description -n kernel-smp-char-dLAN -l de.UTF-8
-Linux SMP Kernel Treiber für MicroLink dLAN.
-
-%description -n kernel-smp-char-dLAN -l pl.UTF-8
-Sterowniki jądra SMP Linuksa dla dLAN MicroLinka.
-
 %prep
-%setup -q -n %{name}-linux-package-%{version}
-%patch0 -p1
+%setup -q -n %{name}-linux-package-v%{version}
 
 %build
-%configure
+%configure \
+	%{?without_kernel:--disable-usbdriver}
+
 %if %{with userspace}
-%{__make} cfgtool \
-	CFLAGS='%{rpmcflags} -Wall $(DEFS) $(DEFINES)'
+%{__make} -C tool
 %endif
 
 %if %{with kernel}
-# kernel module(s)
-cd driver
-for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
-	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
-		exit 1
-	fi
-	install -d o/include/linux
-	ln -sf %{_kernelsrcdir}/config-$cfg o/.config
-	ln -sf %{_kernelsrcdir}/Module.symvers-$cfg o/Module.symvers
-	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h o/include/linux/autoconf.h
-	%{__make} -j1 -C %{_kernelsrcdir} O=$PWD/o prepare scripts
-	%{__make} -C %{_kernelsrcdir} clean \
-		RCS_FIND_IGNORE="-name '*.ko' -o" \
-		M=$PWD O=$PWD/o \
-		%{?with_verbose:V=1}
-	%{__make} -C %{_kernelsrcdir} modules \
-%if "%{_target_base_arch}" != "%{_arch}"
-		ARCH=%{_target_base_arch} \
-		CROSS_COMPILE=%{_target_base_cpu}-pld-linux- \
-%endif
-		HOSTCC="%{__cc}" \
-		CPP="%{__cpp}" \
-		M=$PWD O=$PWD/o \
-		%{?with_verbose:V=1}
-	mv devolo_usb{,-$cfg}.ko
-done
+%build_kernel_modules -C driver -m devolo_usb
 %endif
 
 %install
