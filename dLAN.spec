@@ -11,14 +11,13 @@
 %undefine	with_dist_kernel
 %endif
 #
-Summary:	dLAN drivers
-Summary(de.UTF-8):	dLAN Treiber
-Summary(pl.UTF-8):	Sterowniki dLAN
+Summary:	Linux drivers for devolo dLAN HomePlug adapters
+Summary(pl.UTF-8):	Sterowniki dla Linuksa do adapterów devolo dLAN HomePlug
 Name:		dLAN
 Version:	3
 Release:	0.1
 License:	Devolo AG License, non-distributable
-Group:		Applications
+Group:		Applications/System
 Source0:	http://download.devolo.net/webcms/0518732001164965747/%{name}-linux-package-v%{version}.tar.gz
 # NoSource0-md5:	5ac30a52511a22571805519641a28e66
 NoSource:	0
@@ -34,18 +33,20 @@ BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-dLAN drivers for Linux 2.4/2.6.
+Linux 2.4/2.6 drivers for devolo dLAN HomePlug adapters for data
+communication over the household power grid.
 
-%description -l de.UTF-8
-dLAN Treiber für Linux 2.4/2.6.
+This package contains userspace utilities.
 
 %description -l pl.UTF-8
-Sterowniki dLAN dla Linuksa 2.4/2.6.
+Sterowniki dla Linuksa 2.4/2.6 do adapterów devolo dLAN HomePlug
+służących do przesyłania danych po domowej sieci energetycznej.
+
+Ten pakiet zawiera narzędzia przestrzeni użytkownika.
 
 %package -n kernel-char-dLAN
-Summary:	Linux kernel driver for dLAN
-Summary(de.UTF-8):	Linux Kernel Treiber für dLAN
-Summary(pl.UTF-8):	Sterownik jądra Linuksa dla dLAN
+Summary:	Linux kernel driver for devolo dLAN HomePlug adapters
+Summary(pl.UTF-8):	Sterownik jądra Linuksa dla adapterów devolo dLAN HomePlug
 Release:	%{release}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %if %{with dist_kernel}
@@ -55,13 +56,12 @@ Requires(postun):	%releq_kernel
 Requires(post,postun):	/sbin/depmod
 
 %description -n kernel-char-dLAN
-Linux kernel drivers for dLAN.
-
-%description -n kernel-char-dLAN -l de.UTF-8
-Linux Kernel Treiber für dLAN.
+Linux kernel drivers for devolo dLAN HomePlug adapters for data
+communication over the household power grid.
 
 %description -n kernel-char-dLAN -l pl.UTF-8
-Sterowniki jądra Linuksa dla dLAN.
+Sterowniki jądra Linuksa do adapterów devolo dLAN HomePlug służących
+do przesyłania danych po domowej sieci energetycznej.
 
 %prep
 %setup -q -n %{name}-linux-package-v%{version}
