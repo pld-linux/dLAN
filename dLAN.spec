@@ -68,7 +68,7 @@ do przesyłania danych po domowej sieci energetycznej.
 
 %build
 %configure \
-	%{?without_kernel:--disable-usbdriver}
+	%{!?with_kernel:--disable-usbdriver}
 
 %if %{with userspace}
 %{__make} -C tool
